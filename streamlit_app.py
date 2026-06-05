@@ -4,7 +4,7 @@ import pandas as pd
 from alpaca.data.historical import StockHistoricalDataClient
 from alpaca.data.timeframe import TimeFrame
 from alpaca.data.requests import StockBarsRequest, StockSnapshotRequest
-from alpaca.data.models import DataFeed # Add this import at the top of your script
+from alpaca.data.enums import DataFeed
 from datetime import datetime, timedelta
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick
