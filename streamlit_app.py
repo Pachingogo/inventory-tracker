@@ -111,7 +111,7 @@ class Percentile_Analysis:
             # price_max = prices.max()
             # price_min = prices.min()
             # price_std = prices.std()
-            # pct_change = (input_values[i] / pre_daily.close - 1) * 100
+            pct_change = (input_values[i] / pre_daily.close - 1) * 100
             
             current_metrics.append({
                 "name": name,
