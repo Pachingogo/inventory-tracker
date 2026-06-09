@@ -101,17 +101,17 @@ class Percentile_Analysis:
         labels = ["Current", "Open", "High", "Low"]
         
         current_metrics = []
-        fig, axes = plt.subplots(2,2, figsize=(11, 8.5), constrained_layout=True)
-        axes = axes.flatten()
+        # fig, axes = plt.subplots(2,2, figsize=(11, 8.5), constrained_layout=True)
+        # axes = axes.flatten()
         
         for i, (data, val, name) in enumerate(zip(data_sets, input_values, labels)):
             percentile = stats.percentileofscore(data, val)
-            prices = data
-            price_mean = prices.mean()
-            price_max = prices.max()
-            price_min = prices.min()
-            price_std = prices.std()
-            pct_change = (input_values[i] / pre_daily.close - 1) * 100
+            # prices = data
+            # price_mean = prices.mean()
+            # price_max = prices.max()
+            # price_min = prices.min()
+            # price_std = prices.std()
+            # pct_change = (input_values[i] / pre_daily.close - 1) * 100
             
             current_metrics.append({
                 "name": name,
@@ -120,23 +120,24 @@ class Percentile_Analysis:
                 "pr": percentile
             })
             
-            axes[i].hist(data, bins=200, color='skyblue', edgecolor='black', alpha=0.7, cumulative=True, density=True, histtype='step')
-            axes[i].axvline(val, color='red', linestyle='--', label=f'{name}: ${val:.2f}')
-            axes[i].axvspan(price_mean - 1 * price_std, price_mean + 1 * price_std, color="lime", alpha=0.25, label=f'±1σ ({price_mean - 1 * price_std:.2f} - {price_mean + 1 * price_std:.2f})')
-            axes[i].axvspan(price_mean - 2 * price_std, price_mean + 2 * price_std, color="orange", alpha=0.2, label=f'±2σ ({price_mean - 2 * price_std:.2f} - {price_mean + 2 * price_std:.2f})')
-            axes[i].axvspan(price_min, price_max, color="lightcoral", alpha=0.15, label=f'±3σ ({price_min:.2f} - {price_max:.2f})')
-            axes[i].axvline(price_mean, color="black", linestyle="-", linewidth=1, label="Mean")
+            # axes[i].hist(data, bins=200, color='skyblue', edgecolor='black', alpha=0.7, cumulative=True, density=True, histtype='step')
+            # axes[i].axvline(val, color='red', linestyle='--', label=f'{name}: ${val:.2f}')
+            # axes[i].axvspan(price_mean - 1 * price_std, price_mean + 1 * price_std, color="lime", alpha=0.25, label=f'±1σ ({price_mean - 1 * price_std:.2f} - {price_mean + 1 * price_std:.2f})')
+            # axes[i].axvspan(price_mean - 2 * price_std, price_mean + 2 * price_std, color="orange", alpha=0.2, label=f'±2σ ({price_mean - 2 * price_std:.2f} - {price_mean + 2 * price_std:.2f})')
+            # axes[i].axvspan(price_min, price_max, color="lightcoral", alpha=0.15, label=f'±3σ ({price_min:.2f} - {price_max:.2f})')
+            # axes[i].axvline(price_mean, color="black", linestyle="-", linewidth=1, label="Mean")
 
             # FIXED: Removed the broad x-axis MultipleLocator(10) to let matplotlib auto-scale the price units correctly
-            axes[i].yaxis.set_major_locator(mtick.MultipleLocator(0.10))
-            axes[i].yaxis.set_major_formatter(mtick.PercentFormatter(1.0))
+            # axes[i].yaxis.set_major_locator(mtick.MultipleLocator(0.10))
+            # axes[i].yaxis.set_major_formatter(mtick.PercentFormatter(1.0))
             
-            axes[i].axvline(pre_daily.close, color='grey', linestyle=':', label=f'T-1 close: ${pre_daily.close:.2f}')
-            axes[i].set_title(f"{name} {pct_change:.2f}% (Percentile: {percentile:.1f}%)")
-            axes[i].legend(loc="upper left", fontsize='x-small')
-            axes[i].grid(True, which='both', linestyle='--', linewidth=0.5)
+            # axes[i].axvline(pre_daily.close, color='grey', linestyle=':', label=f'T-1 close: ${pre_daily.close:.2f}')
+            # axes[i].set_title(f"{name} {pct_change:.2f}% (Percentile: {percentile:.1f}%)")
+            # axes[i].legend(loc="upper left", fontsize='x-small')
+            # axes[i].grid(True, which='both', linestyle='--', linewidth=0.5)
             
-        return fig, current_metrics, pre_daily.close
+        return  current_metrics, pre_daily.close
+        # return fig, current_metrics, pre_daily.close
 
 
 # --- STREAMLIT DASHBOARD APPLICATION EXECUTION ---
@@ -167,7 +168,8 @@ try:
         api_secret=secret_key
     )
     
-    fig, metrics, t_minus_close = analysis.PR()
+    # fig, metrics, t_minus_close = analysis.PR()
+    metrics, t_minus_close = analysis.PR()
     
     st.info(f"**Previous Session Close (T-1):** ${t_minus_close:.2f}")
     
@@ -182,9 +184,27 @@ try:
             st.text(f"Percentile Rank: {item['pr']:.1f}%")
     
     st.markdown("---")
-    
-    st.pyplot(fig)
-    plt.close(fig) 
+    selected_row = analysis.analyze_drawdowns()  
+    items = list(selected_row.items())  # List of tuples: [('Col_1', value), ...]
+
+    MAX_COLS = 3
+
+    # 2. Loop through items in batches of 6
+    for i in range(0, len(items), MAX_COLS):
+        batch = items[i : i + MAX_COLS]
+        
+        # Create the horizontal row with up to 6 columns
+        cols = st.columns(len(batch))
+        
+        # Render each item inside its matching column
+        for col, (col_name, value) in zip(cols, batch):
+            with col:
+                st.metric(label=col_name, value=str(value))
+
+        
+    st.markdown("---")
+    # st.pyplot(fig)
+    # plt.close(fig) 
     
 except Exception as e:
     st.error(f"Error updating dashboard metrics: {e}")
