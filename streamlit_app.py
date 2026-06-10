@@ -152,7 +152,7 @@ class Percentile_Analysis:
         """      
         
         self.data = self.data.sort_index()
-        print(self.data.head(), self.data.tail())
+        
 
 
         price_series = self.data["price"]
@@ -290,6 +290,7 @@ class Percentile_Analysis:
             "Recovery_Rate",
             
         ]]
+        print(analysis_result)
         return analysis_result.iloc[0]
 
 # --- STREAMLIT DASHBOARD APPLICATION EXECUTION ---
