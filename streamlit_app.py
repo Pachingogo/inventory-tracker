@@ -316,6 +316,7 @@ st.write(f"⏱️ **Last update checked at:** `{datetime.now().strftime('%H:%M:%
 
 try:
     analysis = Percentile_Analysis(
+        start_date = "2016-01-01",
         symbol=ticker_input,
         api_key=api_key,
         api_secret=secret_key
