@@ -291,7 +291,7 @@ class Percentile_Analysis:
             
         ]]
         
-        return analysis_result.iloc[0]
+        return (analysis_result)
 
 # --- STREAMLIT DASHBOARD APPLICATION EXECUTION ---
 st.title("📊 Real-Time Percentile Analysis")
@@ -342,7 +342,8 @@ try:
     
     st.markdown("---")
     
-    selected_row = analysis.analyze_drawdowns()  
+    df_drawdown = analysis.analyze_drawdowns()
+    selected_row = df_drawdown.iloc[0]   
     items = list(selected_row.items())  # List of tuples: [('Col_1', value), ...]
 
     MAX_COLS = 3
@@ -361,6 +362,9 @@ try:
 
         
     st.markdown("---")
+
+    # Provide Drawdown table 
+    st.dataframe(df_drawdown, use_container_width=True)
     # st.pyplot(fig)
     # plt.close(fig) 
     
