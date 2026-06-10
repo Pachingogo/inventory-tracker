@@ -311,7 +311,10 @@ try:
 except KeyError:
     st.error("Missing credentials. Please check your `.streamlit/secrets.toml` file configuration.")
     st.stop()
-
+CDT = timezone(timedelta(hours=-5))
+        
+# Get current time in CDT (UTC-5)
+current_time = datetime.now(CDT)
 st.write(f"⏱️ **Last update checked at:** `{datetime.now().strftime('%H:%M:%S')}`")
 
 try:
