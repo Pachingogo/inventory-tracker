@@ -248,8 +248,8 @@ try:
     analysis = Percentile_Analysis(
         start_date = "2016-01-01",
         symbol=ticker_input,
-        api_key=ALPACA_KEY,
-        api_secret=ALPACA_SECRET
+        api_key=api_key,
+        api_secret=secret_key
     )
     
     metrics, t_minus_close = analysis.PR()
